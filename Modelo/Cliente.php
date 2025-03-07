@@ -1,6 +1,13 @@
 <?php 
 
+
+
+
 class Cliente{
+
+    
+
+
 
 
 
@@ -540,7 +547,7 @@ class Cliente{
     public function Confirmar_Transferencia($con){
 
         if(isset($_SESSION['conf_cue']) && isset($_SESSION['conf_cue_ben']) && isset($_SESSION['conf_nom_ben']) && isset($_SESSION['conf_cant']) ){
-
+            date_default_timezone_set('America/New_York');
             $fecha_act = date('Y-m-d');
             $hora_act = date('H:i:s');
 
@@ -551,7 +558,7 @@ class Cliente{
 
             if($insertar->affected_rows > 0){
 
-                $restar_saldo = $con->prepare("CALL Transferencia(?,?,?)");
+                $restar_saldo = $con->prepare("CALL Transferir(?,?,?)");
                 $restar_saldo->bind_param('sss',$_SESSION['conf_cue'],$_SESSION['conf_cue_ben'],$_SESSION['conf_cant']);
                 $restar_saldo->execute();
                 $restar_saldo->store_result();
@@ -578,9 +585,42 @@ class Cliente{
 
 
     }
+
+    public function Post_Mostrar_datos_transaccion($cone){
+
+        if($_SERVER["REQUEST_METHOD"] == "POST"){
+
+            if(isset($_POST['cuenta'])){
+
+                $cuenta = $_POST['cuenta'];
+
+                $saldo = $this->Mostrar_Saldo($cuenta, $cone);
+
+                echo "Saldo: ".$saldo."$";
+
+               
+              
+
+            }
+
+        }
+
+    }
+
+    
     
 
 }
+
+
+// base de datos
+include  $_SERVER['DOCUMENT_ROOT'] ."../recursos/bd/bd.php";
+
+$cone = $conexion;
+
+$cli = new Cliente();
+
+$cli->Post_Mostrar_datos_transaccion($cone);
 
 
 

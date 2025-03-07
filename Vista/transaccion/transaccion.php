@@ -69,50 +69,51 @@
     <ul id="lista_datos"   style="list-style:  none; border: solid 2px blue; width: 1000px;">
 
     <li> Cedula:  <?php  echo $cli->Mostrar_Datos_Transaccion("Cedula",$con);  ?> &nbsp&nbsp&nbsp   Nombre: <?php  echo $cli->Mostrar_Datos_Transaccion("Nombres",$con);    ?>  &nbsp&nbsp&nbsp   Apellidos: <?php  echo $cli->Mostrar_Datos_Transaccion("Apellidos",$con);    ?>  &nbsp&nbsp&nbsp   Correo: <?php  echo $cli->Mostrar_Datos_Transaccion("Correo",$con);    ?></li>
-    <li> Cuenta: <select name="cb_cuenta" id=""><?php  foreach($cli->Mostrar_Cuenta($con) as $cuenta){ echo '  <option value="'.$cuenta.'"> '.$cuenta.'</option>';  }    ?> </select></li>
+    <li> Cuenta: <select name="cb_cuenta"  onchange="Mostrar_datos_transaccion()" id="cb_cuen">   <option value="Seleccione" id="opt_sel">SELECCIONE</option> <?php  foreach($cli->Mostrar_Cuenta($con) as $cuenta){ echo '  <option value="'.$cuenta.'"> '.$cuenta.'</option>';  }    ?> </select> <label for="" id="lb_saldo"></label> </li>
 
     </ul>
 
     <br>
     <br>
 
-    <input type="submit" name="btn_continuar_tra" id="btn_con_tra" value="Continuar" style="display: flex; margin: auto;">
+   
 
-    <?php 
+   
+
+    <br>
+
+    '
+    <ul  style="list-style: none; border: solid 2px blue; width: 1000px;">
+
+                 
+                 <li> Numero de cuenta del beneficiario: <input type="number" name="txt_cuenta_beneficiario" id="txt_ben"> </li> 
+                 <li>Nombre del beneficiario:<input type="text" name="txt_nombre_beneficiario" id="txt_nom"> </li>
+                <li> Cantidad a depositar: <input type="number" name="txt_cantidad_deposito" id="txt_cant_dep" step="any">  </li>
     
-    if(isset($_SESSION['saldo'])){
+   
+    </ul>';
 
-    
-    
-    
-    ?>
-
-    <ul id="lista_monto" style="list-style: none; border: solid 2px blue; width: 1000px;">
-
-    <li>  Saldo: <?php  echo $_SESSION['saldo']; ?>  </li>
-
-    <li> Numero de cuenta del beneficiario: <input type="number" name="txt_cuenta_beneficiario" id="txt_ben"> </li> 
-    
-    <li>Nombre del beneficiario:<input type="text" name="txt_nombre_beneficiario" id="txt_nom"> </li> 
-    <li> Cantidad a depositar: <input type="number" name="txt_cantidad_deposito" id="txt_cant_dep">  </li>
-
-    </ul>
 
         <br>
 
 
     <input type="submit" name="btn_transferir" id="btn_tra" value="Continuar">
 
-    <?php 
     
-    }
 
-    ?>
 
-    </form>
+
 
 
    
+   
+   </form>
+
+   <script src="../../recursos/js/Transaccion_ajax.js">
+
+
+
+</script>
 
 
 </body>
