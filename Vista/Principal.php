@@ -28,6 +28,7 @@
 
     }else{
         $_SESSION['llave_transaccion'] = "activo";
+        $_SESSION['llave_con_estado'] = "activo";
     }
 
     
@@ -47,7 +48,7 @@
             }
 
             if(id === "btn_est"){
-                window.location.href = "../Vista/transaccion/transaccion.php";
+                window.location.href = "../Vista/ConsultarEstado.php";
             }
             
 

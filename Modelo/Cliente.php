@@ -607,13 +607,314 @@ class Cliente{
 
     }
 
+   
+
+
+    public function Consulta_Estado_Cuenta($con,$cuenta){
+
+
+
+        $consultar = $con->prepare("SELECT transaccion.fecha_tra, transaccion.Hora_tra, transaccion.Cantidad ,  cli_rem.Nombres  AS 'Remitente'  , transaccion.Cuenta_rem, cli_ben.Nombres AS 'Beneficiario'  , transaccion.Cuenta_ben FROM transaccion  INNER JOIN cuenta as cu_rem ON transaccion.Cuenta_rem = cu_rem.Numero_cuenta INNER JOIN cliente as cli_rem ON cu_rem.Cedula = cli_rem.Cedula  INNER JOIN cuenta AS cu_ben ON transaccion.Cuenta_ben = cu_ben.Numero_cuenta INNER JOIN cliente AS cli_ben ON cu_ben.Cedula = cli_ben.Cedula WHERE cu_rem.Numero_Cuenta = ?");
+        $consultar->bind_param('s',$cuenta);
+        $consultar->execute();
+        $consultado = $consultar->get_result();
+        
+
+        $fila = [];
+
+        while($columnas = $consultado->fetch_assoc()){
+
+            
+
+            $fila[] = $columnas;
+
+           
+        }
+
+        return $fila;
+
+    }
+
+
+
+    public function Post_Mostrar_Estado_Cuenta($con){
+
+        if($_SERVER["REQUEST_METHOD"] == "POST"){
+
+            if(isset($_POST['cuenta_est'])){
+
+                $cuenta = $_POST['cuenta_est'];
+                 $fila = $this->Consulta_Estado_Cuenta($con,$cuenta);
+                 $saldo = $this->Mostrar_Saldo($cuenta,$con);
+
+
+                echo '  <div id= "saldo_contendor"  style="display: flex; justify-content: center;"><h2> <label for="">Saldo: &nbsp;&nbsp; '.$saldo.' </label></h2> </div>';
+
+                echo '<br><br><br>';
+
+                echo '<h1><label for="">Movimientos Bancarios</label></h1>';
+
+                echo '<label for=""> Filtro por fecha:  </label> <input type="date" name="txt_fec" id="tx_fe" onchange="Filtrar_Fecha()"> <label for="">o Filtro por mes:</label> <input id="inp_mes_est"  type="month" onchange="Filtrar_Mes()">';
+
+                
+
+                echo '<br><br><br>';
+
+                echo '<table id="tb_estado" border = "2">
+                <tr>
+
+                <td> Fecha </td>
+                <td> Hora </td>
+                <td> Cantidad </td>
+                <td> Nombre del depositante </td>
+                <td> Cuenta del depositante </td>
+                <td> Nombre del beneficiario </td>
+                <td> Cuenta del beneficiario </td>
+
+
+
+                </tr>
+
+                '; foreach($fila as $imprimir ){
+
+                    
+                echo '
+
+                <tr> 
+         
+                <td>'.$imprimir["fecha_tra"].'</td>
+                 <td>'.$imprimir["Hora_tra"].'</td>
+                 <td>'.$imprimir["Cantidad"].'$ </td>
+                 <td>'.$imprimir["Remitente"].'</td>
+                 <td>'.$imprimir["Cuenta_rem"].'</td>
+                 <td>'.$imprimir["Beneficiario"].'</td> 
+                 <td>'.$imprimir["Cuenta_ben"].'</td>
+                </tr>
+
+
+                '; }
+
+
+                echo '</table>';
+        
+                
+
+
+                
+
+
+            }
+           
+            
+
+
+        }
+
+    }
+
+    public function Consulta_Filtrar_Estado_Cuenta($con,$cuenta,$campo,$objeto,){
+
+        $consulta = $con->prepare("SELECT transaccion.fecha_tra, transaccion.Hora_tra, transaccion.Cantidad ,  cli_rem.Nombres  AS 'Remitente'  , transaccion.Cuenta_rem, cli_ben.Nombres AS 'Beneficiario'  , transaccion.Cuenta_ben FROM transaccion  INNER JOIN cuenta as cu_rem ON transaccion.Cuenta_rem = cu_rem.Numero_cuenta INNER JOIN cliente as cli_rem ON cu_rem.Cedula = cli_rem.Cedula  INNER JOIN cuenta AS cu_ben ON transaccion.Cuenta_ben = cu_ben.Numero_cuenta INNER JOIN cliente AS cli_ben ON cu_ben.Cedula = cli_ben.Cedula WHERE cu_rem.Numero_Cuenta = ? AND {$campo} = ?");
+        $consulta->bind_param('ss',$cuenta,$objeto);
+        $consulta->execute();
+        $consultado = $consulta->get_result();
+
+        $filas = [];
+
+        while($columnas = $consultado->fetch_assoc()){
+
+            $filas[] = $columnas;
+
+        }
+
+        return $filas;
+
+    }
+
+
+    public function Post_Filtrar_Estado_Cuenta_Fecha($con){
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+            if(isset($_POST['fecha']) && isset($_POST['cuentaestado'])){
+
+                $fecha = $_POST['fecha'];
+                $cuenta = $_POST['cuentaestado'];
+
+                $fila = $this->Consulta_Filtrar_Estado_Cuenta($con,$cuenta,"transaccion.fecha_tra",$fecha);
+
+
+                if($fila != null){
+
+               
+
+                echo '
+                <tr>
+                <td> Fecha </td>
+                <td> Hora </td>
+                <td> Cantidad </td>
+                <td> Nombre del depositante </td>
+                <td> Cuenta del depositante </td>
+                <td> Nombre del beneficiario </td>
+                <td> Cuenta del beneficiario </td>
+
+
+
+                </tr>
+                ';
+
+
+
+
+                foreach($fila as $imprimir ){
+
+
+
+                    
+
+
+
+                    
+                    
+                    echo '
+
+
+    
+                    <tr> 
+             
+                    <td>'.$imprimir["fecha_tra"].'</td>
+                     <td>'.$imprimir["Hora_tra"].'</td>
+                     <td>'.$imprimir["Cantidad"].'$</td>
+                     <td>'.$imprimir["Remitente"].'</td>
+                     <td>'.$imprimir["Cuenta_rem"].'</td>
+                     <td>'.$imprimir["Beneficiario"].'</td> 
+                     <td>'.$imprimir["Cuenta_ben"].'</td>
+                    </tr>
+                    
+    
+                    '; }
+
+                
+
+                }else{
+                    echo ' <button type="button" onclick="MostrarEstado()">Volver a mostrar Todas las transacciónes </button>';
+                }
+
+            }
+
+        }
+
+
+    }
+
+    public function Consulta_Filtrar_Estado_Cuenta_Dos_Campos($con,$cuenta,$campo1,$campo2,$objeto1,$objeto2){
+
+        $consulta = $con->prepare("SELECT transaccion.fecha_tra, transaccion.Hora_tra, transaccion.Cantidad ,  cli_rem.Nombres  AS 'Remitente'  , transaccion.Cuenta_rem, cli_ben.Nombres AS 'Beneficiario'  , transaccion.Cuenta_ben FROM transaccion  INNER JOIN cuenta as cu_rem ON transaccion.Cuenta_rem = cu_rem.Numero_cuenta INNER JOIN cliente as cli_rem ON cu_rem.Cedula = cli_rem.Cedula  INNER JOIN cuenta AS cu_ben ON transaccion.Cuenta_ben = cu_ben.Numero_cuenta INNER JOIN cliente AS cli_ben ON cu_ben.Cedula = cli_ben.Cedula WHERE cu_rem.Numero_Cuenta = ? AND {$campo1} = ? AND {$campo2} = ?" );
+        $consulta->bind_param('sss',$cuenta,$objeto1,$objeto2);
+        $consulta->execute();
+        $consultado = $consulta->get_result();
+
+        $filas = [];
+
+        while($columnas = $consultado->fetch_assoc()){
+
+            $filas[] = $columnas;
+
+        }
+
+        return $filas;
+
+    }
+
+
+    public function Post_Filtrar_Estado_Cuenta_Mes($con){
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+            if(isset($_POST['mesestado']) && isset($_POST['cuentaestado_mes'])){
+
+                $fecha = $_POST['mesestado'];
+                $cuenta = $_POST['cuentaestado_mes'];
+
+                $mes = substr($fecha, 5, 2);
+
+                $año = substr($fecha,0,4);
+
+                $fila = $this->Consulta_Filtrar_Estado_Cuenta_Dos_Campos($con,$cuenta,"MONTH(transaccion.fecha_tra)","YEAR(transaccion.fecha_tra)",$mes,$año);
+
+
+                if($fila != null){
+
+               
+
+                echo '
+                <tr>
+                <td> Fecha </td>
+                <td> Hora </td>
+                <td> Cantidad </td>
+                <td> Nombre del depositante </td>
+                <td> Cuenta del depositante </td>
+                <td> Nombre del beneficiario </td>
+                <td> Cuenta del beneficiario </td>
+
+
+
+                </tr>
+                ';
+
+
+
+
+                foreach($fila as $imprimir ){
+
+
+
+                    
+
+
+
+                    
+                    
+                    echo '
+
+
+    
+                    <tr> 
+             
+                    <td>'.$imprimir["fecha_tra"].'</td>
+                     <td>'.$imprimir["Hora_tra"].'</td>
+                     <td>'.$imprimir["Cantidad"].'$</td>
+                     <td>'.$imprimir["Remitente"].'</td>
+                     <td>'.$imprimir["Cuenta_rem"].'</td>
+                     <td>'.$imprimir["Beneficiario"].'</td> 
+                     <td>'.$imprimir["Cuenta_ben"].'</td>
+                    </tr>
+                    
+    
+                    '; }
+
+                
+
+                }else{
+                    echo ' <button type="button" onclick="MostrarEstado()">Volver a mostrar Todas las transacciónes </button>';
+                }
+
+            }
+
+        }
+
+
+    }
+
+
+
     
     
 
 }
 
 
-// base de datos
+// conexion ajax
 include  $_SERVER['DOCUMENT_ROOT'] ."../recursos/bd/bd.php";
 
 $cone = $conexion;
@@ -623,6 +924,11 @@ $cli = new Cliente();
 $cli->Post_Mostrar_datos_transaccion($cone);
 
 
+$cli->Post_Mostrar_Estado_Cuenta($cone);
+
+$cli->Post_Filtrar_Estado_Cuenta_Fecha($cone);
+
+$cli->Post_Filtrar_Estado_Cuenta_Mes($cone);
 
 
 
