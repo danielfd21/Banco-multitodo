@@ -33,6 +33,7 @@
 ?>
 
 
+
 <body>
 
         
@@ -53,10 +54,10 @@
 
         <div id="contenedor_tab_est">
 
-
+        
         </div>
 
-        <script src="../recursos/js/ConsultarEstadoajax.js">
+        <script src="../recursos/js/ConsultarEstado_ajax.js">
 
 
         </script>

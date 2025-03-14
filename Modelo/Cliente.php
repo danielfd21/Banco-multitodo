@@ -554,7 +554,9 @@ class Cliente{
             $insertar = $con->prepare("INSERT INTO transaccion VALUES('',?,?,?,?,?)");
             $insertar->bind_param('sssss',$fecha_act,$hora_act,$_SESSION['conf_cant'],$_SESSION['conf_cue'],$_SESSION['conf_cue_ben']);
             $insertar->execute();
-            
+            $id_tra = $con->insert_id;
+
+            $_SESSION['id_tra'] = $id_tra;
 
             if($insertar->affected_rows > 0){
 
@@ -614,7 +616,7 @@ class Cliente{
 
 
 
-        $consultar = $con->prepare("SELECT transaccion.fecha_tra, transaccion.Hora_tra, transaccion.Cantidad ,  cli_rem.Nombres  AS 'Remitente'  , transaccion.Cuenta_rem, cli_ben.Nombres AS 'Beneficiario'  , transaccion.Cuenta_ben FROM transaccion  INNER JOIN cuenta as cu_rem ON transaccion.Cuenta_rem = cu_rem.Numero_cuenta INNER JOIN cliente as cli_rem ON cu_rem.Cedula = cli_rem.Cedula  INNER JOIN cuenta AS cu_ben ON transaccion.Cuenta_ben = cu_ben.Numero_cuenta INNER JOIN cliente AS cli_ben ON cu_ben.Cedula = cli_ben.Cedula WHERE cu_rem.Numero_Cuenta = ?");
+        $consultar = $con->prepare("SELECT transaccion.Id_tra ,transaccion.fecha_tra, transaccion.Hora_tra, transaccion.Cantidad ,  cli_rem.Nombres  AS 'Remitente'  , transaccion.Cuenta_rem, cli_ben.Nombres AS 'Beneficiario'  , transaccion.Cuenta_ben FROM transaccion  INNER JOIN cuenta as cu_rem ON transaccion.Cuenta_rem = cu_rem.Numero_cuenta INNER JOIN cliente as cli_rem ON cu_rem.Cedula = cli_rem.Cedula  INNER JOIN cuenta AS cu_ben ON transaccion.Cuenta_ben = cu_ben.Numero_cuenta INNER JOIN cliente AS cli_ben ON cu_ben.Cedula = cli_ben.Cedula WHERE cu_rem.Numero_Cuenta = ?");
         $consultar->bind_param('s',$cuenta);
         $consultar->execute();
         $consultado = $consultar->get_result();
@@ -638,6 +640,7 @@ class Cliente{
 
 
     public function Post_Mostrar_Estado_Cuenta($con){
+        
 
         if($_SERVER["REQUEST_METHOD"] == "POST"){
 
@@ -646,6 +649,7 @@ class Cliente{
                 $cuenta = $_POST['cuenta_est'];
                  $fila = $this->Consulta_Estado_Cuenta($con,$cuenta);
                  $saldo = $this->Mostrar_Saldo($cuenta,$con);
+                
 
 
                 echo '  <div id= "saldo_contendor"  style="display: flex; justify-content: center;"><h2> <label for="">Saldo: &nbsp;&nbsp; '.$saldo.' </label></h2> </div>';
@@ -670,6 +674,7 @@ class Cliente{
                 <td> Cuenta del depositante </td>
                 <td> Nombre del beneficiario </td>
                 <td> Cuenta del beneficiario </td>
+                <td> Descargar Comprobante </td>
 
 
 
@@ -689,6 +694,7 @@ class Cliente{
                  <td>'.$imprimir["Cuenta_rem"].'</td>
                  <td>'.$imprimir["Beneficiario"].'</td> 
                  <td>'.$imprimir["Cuenta_ben"].'</td>
+                  <td><form action="../recursos/PDF/Plantillas/Recibo_transacción.php" METHOD="POST"><input type="hidden" name="txt_id_tran" id="txt_id_tra" value="'.htmlspecialchars($imprimir["Id_tra"]).'"><input type="submit" name="btn_mostrar_pdf" value="DESCARGAR PDF"></form></td>
                 </tr>
 
 
@@ -714,7 +720,7 @@ class Cliente{
 
     public function Consulta_Filtrar_Estado_Cuenta($con,$cuenta,$campo,$objeto,){
 
-        $consulta = $con->prepare("SELECT transaccion.fecha_tra, transaccion.Hora_tra, transaccion.Cantidad ,  cli_rem.Nombres  AS 'Remitente'  , transaccion.Cuenta_rem, cli_ben.Nombres AS 'Beneficiario'  , transaccion.Cuenta_ben FROM transaccion  INNER JOIN cuenta as cu_rem ON transaccion.Cuenta_rem = cu_rem.Numero_cuenta INNER JOIN cliente as cli_rem ON cu_rem.Cedula = cli_rem.Cedula  INNER JOIN cuenta AS cu_ben ON transaccion.Cuenta_ben = cu_ben.Numero_cuenta INNER JOIN cliente AS cli_ben ON cu_ben.Cedula = cli_ben.Cedula WHERE cu_rem.Numero_Cuenta = ? AND {$campo} = ?");
+        $consulta = $con->prepare("SELECT transaccion.Id_tra, transaccion.fecha_tra, transaccion.Hora_tra, transaccion.Cantidad ,  cli_rem.Nombres  AS 'Remitente'  , transaccion.Cuenta_rem, cli_ben.Nombres AS 'Beneficiario'  , transaccion.Cuenta_ben FROM transaccion  INNER JOIN cuenta as cu_rem ON transaccion.Cuenta_rem = cu_rem.Numero_cuenta INNER JOIN cliente as cli_rem ON cu_rem.Cedula = cli_rem.Cedula  INNER JOIN cuenta AS cu_ben ON transaccion.Cuenta_ben = cu_ben.Numero_cuenta INNER JOIN cliente AS cli_ben ON cu_ben.Cedula = cli_ben.Cedula WHERE cu_rem.Numero_Cuenta = ? AND {$campo} = ?");
         $consulta->bind_param('ss',$cuenta,$objeto);
         $consulta->execute();
         $consultado = $consulta->get_result();
@@ -734,12 +740,16 @@ class Cliente{
 
     public function Post_Filtrar_Estado_Cuenta_Fecha($con){
 
+        
+
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
             if(isset($_POST['fecha']) && isset($_POST['cuentaestado'])){
 
                 $fecha = $_POST['fecha'];
                 $cuenta = $_POST['cuentaestado'];
+
+               
 
                 $fila = $this->Consulta_Filtrar_Estado_Cuenta($con,$cuenta,"transaccion.fecha_tra",$fecha);
 
@@ -757,6 +767,8 @@ class Cliente{
                 <td> Cuenta del depositante </td>
                 <td> Nombre del beneficiario </td>
                 <td> Cuenta del beneficiario </td>
+                <td> Descargar Comprobante </td>
+                
 
 
 
@@ -789,6 +801,7 @@ class Cliente{
                      <td>'.$imprimir["Cuenta_rem"].'</td>
                      <td>'.$imprimir["Beneficiario"].'</td> 
                      <td>'.$imprimir["Cuenta_ben"].'</td>
+                      <td><form action="../recursos/PDF/Plantillas/Recibo_transacción.php" METHOD="POST"><input type="hidden" name="txt_id_tran" id="txt_id_tra" value="'.htmlspecialchars($imprimir["Id_tra"]).'"><input type="submit" name="btn_mostrar_pdf" value="DESCARGAR PDF"></form></td>
                     </tr>
                     
     
@@ -809,7 +822,7 @@ class Cliente{
 
     public function Consulta_Filtrar_Estado_Cuenta_Dos_Campos($con,$cuenta,$campo1,$campo2,$objeto1,$objeto2){
 
-        $consulta = $con->prepare("SELECT transaccion.fecha_tra, transaccion.Hora_tra, transaccion.Cantidad ,  cli_rem.Nombres  AS 'Remitente'  , transaccion.Cuenta_rem, cli_ben.Nombres AS 'Beneficiario'  , transaccion.Cuenta_ben FROM transaccion  INNER JOIN cuenta as cu_rem ON transaccion.Cuenta_rem = cu_rem.Numero_cuenta INNER JOIN cliente as cli_rem ON cu_rem.Cedula = cli_rem.Cedula  INNER JOIN cuenta AS cu_ben ON transaccion.Cuenta_ben = cu_ben.Numero_cuenta INNER JOIN cliente AS cli_ben ON cu_ben.Cedula = cli_ben.Cedula WHERE cu_rem.Numero_Cuenta = ? AND {$campo1} = ? AND {$campo2} = ?" );
+        $consulta = $con->prepare("SELECT transaccion.Id_tra, transaccion.fecha_tra, transaccion.Hora_tra, transaccion.Cantidad ,  cli_rem.Nombres  AS 'Remitente'  , transaccion.Cuenta_rem, cli_ben.Nombres AS 'Beneficiario'  , transaccion.Cuenta_ben FROM transaccion  INNER JOIN cuenta as cu_rem ON transaccion.Cuenta_rem = cu_rem.Numero_cuenta INNER JOIN cliente as cli_rem ON cu_rem.Cedula = cli_rem.Cedula  INNER JOIN cuenta AS cu_ben ON transaccion.Cuenta_ben = cu_ben.Numero_cuenta INNER JOIN cliente AS cli_ben ON cu_ben.Cedula = cli_ben.Cedula WHERE cu_rem.Numero_Cuenta = ? AND {$campo1} = ? AND {$campo2} = ?" );
         $consulta->bind_param('sss',$cuenta,$objeto1,$objeto2);
         $consulta->execute();
         $consultado = $consulta->get_result();
@@ -856,6 +869,7 @@ class Cliente{
                 <td> Cuenta del depositante </td>
                 <td> Nombre del beneficiario </td>
                 <td> Cuenta del beneficiario </td>
+                <td> Descargar Comprobante </td>
 
 
 
@@ -888,6 +902,7 @@ class Cliente{
                      <td>'.$imprimir["Cuenta_rem"].'</td>
                      <td>'.$imprimir["Beneficiario"].'</td> 
                      <td>'.$imprimir["Cuenta_ben"].'</td>
+                      <td><form action="../recursos/PDF/Plantillas/Recibo_transacción.php" METHOD="POST"><input type="hidden" name="txt_id_tran" id="txt_id_tra" value="'.htmlspecialchars($imprimir["Id_tra"]).'"><input type="submit" name="btn_mostrar_pdf" value="Descargar PDF"></form></td>
                     </tr>
                     
     
@@ -905,6 +920,30 @@ class Cliente{
 
 
     }
+
+    public function Get_Numero_Cuenta_Transaccion($con,$id_tra){
+
+        $obtener = $con->prepare("SELECT transaccion.Cuenta_rem FROM transaccion WHERE Id_tra = ?");
+        $obtener->bind_param('s',$id_tra);
+        $obtener->execute();
+        $obtenido = $obtener->get_result();
+        
+        $columna = "";
+        
+        if($obtenido->num_rows > 0){
+
+            $valor = $obtenido->fetch_assoc();
+            $columna = $valor['Cuenta_rem'];
+
+
+        }
+
+        return $columna;
+
+
+    }
+
+    
 
 
 

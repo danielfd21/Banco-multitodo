@@ -1,0 +1,19 @@
+@media print{
+
+    #btn_imp_com{
+
+        display: none !important;
+
+    }
+
+
+
+
+}
+
+#btn_imp_com{
+    display: flex;
+    position: relative;
+    margin: auto;
+
+}

@@ -11,19 +11,31 @@
     
     session_start();
 
-     if(!isset($_SESSION['llave_transaccion_exitosa']) || $_SESSION['llave_transaccion_exitosa'] != "activo"){
+  if(!isset($_SESSION['llave_transaccion_exitosa']) || $_SESSION['llave_transaccion_exitosa'] != "activo"){
 
         header("Location: ../../Vista/Login.php");
-     }
-   
+     }     
      
+
+
+
+
      unset($_SESSION['conf_cue']);
      unset($_SESSION['conf_cant']);
      unset($_SESSION['conf_cue_ben']);
-     unset($_SESSION['conf_nom_ben']);
+     unset($_SESSION['conf_nom_ben']); 
 
+     $id = "";
+        
+        if(isset($_SESSION['id_tra'])){
 
+            $id =  $_SESSION['id_tra'];
 
+          
+
+        }
+
+       
     
     ?>
 
@@ -57,11 +69,29 @@
 
 <br> <br>
 
-<label for="">Imprimir comprobante</label> <br> <br>
+<label for="">Descargar comprobante</label> <br> <br>
 
 
-<input type="submit" name="btn_imprimir" id="btn_imp" value="IMPRIMIR">
 
+
+<form action="../../recursos/PDF/Plantillas/Recibo_transacción.php" METHOD="POST"><input type="hidden" name="txt_id_tran" id="txt_id_tra" value="<?php  echo $id; ?>"><input type="submit" name="btn_mostrar_pdf" value="PDF"></form>
+
+<form action="Imprimir_comprobante.php" METHOD="POST"><input type="hidden" name="txt_id_tran" id="txt_id_tra" value="<?php  echo $id; ?>"><input type="submit" name="btn_mostrar_pdf" value="IMPRIMIR COMPROBANTE"></form>
+
+<style>
+
+@media print{
+
+    #btn_imp{
+
+        display: none;
+    }
+
+}
+
+
+
+</style>
 
 <a href="../../Vista/Login.php"></a>
 

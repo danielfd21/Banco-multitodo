@@ -68,7 +68,7 @@ if(event.persisted){
 
         <br>
 
-        <input type="submit" name="btn_logear" id="btn_log"> 
+        <input type="submit" name="btn_logear" id="btn_log" value="INICIAR CESIÓN"> 
 
         <br>
         <br>
