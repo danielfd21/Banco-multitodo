@@ -33,11 +33,16 @@ session_start();
 
 $id = "";
 $cuenta_dep = "";
+$fecha_tra = "";
+$hora_tra = "";
+
 
 if(isset($_POST['txt_id_tran'])){
     
     $id = $_POST['txt_id_tran'];
     $cuenta_dep = $cli->Get_Numero_Cuenta_Transaccion($con,$id);
+    $fecha_tra = $cli->Get_Fecha_Transaccion($con,$id);
+    $hora_tra = $cli->Get_Hora_Transaccion($con,$id);
     
 }else{
     echo 'no se recibio el id';
@@ -47,8 +52,9 @@ if(isset($_POST['txt_id_tran'])){
 
 
 $fila = $cli->Consulta_Filtrar_Estado_Cuenta($con,$cuenta_dep,"transaccion.Id_tra",$id);
-
-
+$saldo_archivo = $cli->Get_Saldo_Archivo($con,$cuenta_dep,$fecha_tra,$hora_tra);
+$saldo_actual = $cli->Mostrar_Saldo($cuenta_dep,$con);
+$saldo = $saldo_actual - $saldo_archivo;
 
 ?>
 <!DOCTYPE html>
@@ -79,12 +85,12 @@ $fila = $cli->Consulta_Filtrar_Estado_Cuenta($con,$cuenta_dep,"transaccion.Id_tr
          
                 <li><strong>Fecha:</strong> &nbsp;&nbsp;&nbsp;<?php echo $imprimir["fecha_tra"] ?> </li>
                  <li><strong>Hora:</strong> &nbsp;&nbsp;&nbsp; <?php echo $imprimir["Hora_tra"] ?></li>
-                 <li><strong>Cantidad: </strong> &nbsp;&nbsp;&nbsp; <?php echo $imprimir["Cantidad"] ?>$</li>
+                 <li><strong>Cantidad: </strong> &nbsp;&nbsp;&nbsp; <?php echo $imprimir["Cantidad"].'$' ?></li>
                  <li><strong>Nombre del depositante:</strong> &nbsp;&nbsp;&nbsp; <?php echo $imprimir["Remitente"] ?></li>
                  <li><strong>Cuenta del depositante:</strong> &nbsp;&nbsp;&nbsp; <?php  echo $imprimir["Cuenta_rem"] ?></li>
                  <li><strong>Nombre del bneficiario:</strong> &nbsp;&nbsp;&nbsp; <?php echo $imprimir["Beneficiario"] ?></li> 
                  <li><strong>Cuenta del beneficiario:</strong> &nbsp;&nbsp;&nbsp; <?php echo  $imprimir["Cuenta_ben"] ?></td>
-                
+                 <li><strong>Saldo restante:</strong>&nbsp;&nbsp;&nbsp;<?php echo $saldo.'$';  ?></li>
                     <?php  } ?>
                 
 

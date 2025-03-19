@@ -46,9 +46,11 @@
         
 
         <li> Cedula: <?php echo $cli->Mostrar_Datos_Transaccion("Cedula",$con) ?> &nbsp;&nbsp;&nbsp;  Nombres:  <?php echo $cli->Mostrar_Datos_Transaccion("Nombres",$con)   ?> &nbsp;&nbsp;&nbsp;  Apellidos: <?php echo $cli->Mostrar_Datos_Transaccion("Apellidos",$con)  ?> &nbsp;&nbsp;&nbsp; Correo: <?php echo $cli->Mostrar_Datos_Transaccion("Correo",$con) ?> </li>
-        <li> Cuenta: <select  onchange="MostrarEstado()" name="cb_cue_est" id="cb_cu_es"> <option value="Seleccione_est" id="opt_sel_est">--SELECCIONE--</option> <?php  foreach($cli->Mostrar_Cuenta($con) as $cuenta){ echo '<option value="'.$cuenta.'">'.$cuenta.'</option>'; }   ?>  </select>    </li>
+        <li> Cuenta: <select  onchange="MostrarEstado()"  name="cb_cue_est" id="cb_cu_es"> <option value="Seleccione_est" id="opt_sel_est">--SELECCIONE--</option> <?php  foreach($cli->Mostrar_Cuenta($con) as $cuenta){ echo '<option value="'.$cuenta.'">'.$cuenta.'</option>'; }   ?>  </select>    </li>
 
         </ul>
+
+        
 
         
 

@@ -26,6 +26,14 @@ function MostrarEstado(){
 
 }
 
+
+
+
+
+
+
+
+
 function Filtrar_Fecha(){
 
 
@@ -42,7 +50,7 @@ function Filtrar_Fecha(){
         if(objeto.response.trim() === ""){
             alert("No se han encontrado resultados");
         }
-        document.getElementById("tb_estado").innerHTML = objeto.response;
+        document.getElementById("contenedor-filtro").innerHTML = objeto.response;
         console.log(objeto.responseText);
 
     }
@@ -71,7 +79,7 @@ function Filtrar_Mes(){
         if(objeto.response.trim() === ""){
             alert("No se han encontrado resultados");
         }
-        document.getElementById("tb_estado").innerHTML = objeto.response;
+        document.getElementById("contenedor-filtro").innerHTML = objeto.response;
         console.log(objeto.responseText);
 
     }
