@@ -47,7 +47,7 @@ if(isset($_POST['txt_id_tran'])){
 
 
 $fila = $cli->Consulta_Filtrar_Estado_Cuenta($con,$cuenta_dep,"transaccion.Id_tra",$id);
-$saldo = $cli->Mostrar_Saldo($con,$cuenta_dep);
+$saldo = $cli->Mostrar_Saldo($cuenta_dep, $con);
 
 
 ?>

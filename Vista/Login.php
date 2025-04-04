@@ -58,7 +58,7 @@ if(event.persisted){
 
         <form action="../Controlador/ClienteControlador.php" method="post">
         <h1> INICIO DE CESIÓN BANCO MULTITODO </h1> <br>
-        <img src="" alt="logo.php"> <br>
+        <img src="../recursos/img/logo.jpeg" alt="logo.php"> <br>
 
         <label for="">USUARIO:</label> <br>
         <input type="text" name="txt_usu" id="txt_us"> <br>

@@ -51,7 +51,7 @@ unset($_SESSION['conf_nom_ben']);
 
         <h1> Registro DE USUARIO BANCO MULTITODO </h1> <br>
 
-        <img src="" alt="logo.png"> <br>
+        <img src="../../recursos/img/logo.jpeg" alt="logos.php"> <br>
 
         <label for="">Cedula:</label> <br>
         <input type="number"  name="txt_ced" id="txt_ce" oninput="Desbloquear(document.getElementById('cb_te_co'),document.getElementById('txt_ce').value,document.getElementById('txt_cl').value,document.getElementById('btn_con'))" required > <br>
