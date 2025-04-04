@@ -2,7 +2,7 @@ Hola soy Daniel Desarrollador y te comparto la siguiente App:
 
 App Bancaria para clientes mediante PHP - JS - MySQL
 
-NOTA: La pagina no contiene vista, debido a que se espera futuramente añadir un Front End.
+NOTA: La pagina no contiene estilos, debido a que se espera futuramente añadir un Front End.
 
 [VIDEO DEMOSTRATIVO] duracion 6 minutos: https://youtu.be/nySDukVVpAI
 
